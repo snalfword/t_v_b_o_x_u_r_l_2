@@ -19,7 +19,7 @@ jobs:
       - name: Set up Git user
         run: |
           git config --global user.name "GitHub Action"
-          git config --global user.email "smgw352@gmail.com"
+          git config --global user.email "roms452@gmail.com"
 
       # 添加上游仓库为 remote
       - name: Add upstream repository
@@ -35,9 +35,13 @@ jobs:
       - name: Fetch upstream
         run: git fetch upstream
 
-      # 合并最新代码到当前分支
-      - name: Merge upstream changes
-        run: git merge upstream/${{ env.DEFAULT_BRANCH }} --allow-unrelated-histories -m "Merge upstream changes"
+      # 合并最新代码到当前分支，并自动解决冲突
+      - name: Merge upstream changes and resolve conflicts
+        run: |
+          git merge upstream/${{ env.DEFAULT_BRANCH }} --allow-unrelated-histories -m "Merge upstream changes" || true
+          git checkout --theirs . # 自动保留上游仓库的更改
+          git add .
+          git commit -m "Resolve merge conflicts by keeping upstream changes"
 
       # 推送合并后的代码到 Fork
       - name: Push changes
