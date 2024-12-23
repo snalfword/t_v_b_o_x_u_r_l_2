@@ -2,9 +2,9 @@ name: Sync with Upstream
 
 on:
   schedule:
-    # 每天凌晨 1 点自动运行
+    # 每 5 小时运行一次
     - cron: '5 */5 * * *'
-  workflow_dispatch: # 手动触发
+  workflow_dispatch: # 支持手动触发
 
 jobs:
   sync:
@@ -19,15 +19,22 @@ jobs:
       - name: Add upstream repository
         run: git remote add upstream https://github.com/qist/tvbox.git
 
-      # 获取最新代码
+      # 获取目标仓库的默认分支名称
+      - name: Get default branch of upstream
+        run: |
+          DEFAULT_BRANCH=$(git remote show upstream | grep "HEAD branch" | awk '{print $NF}')
+          echo "DEFAULT_BRANCH=$DEFAULT_BRANCH" >> $GITHUB_ENV
+
+      # 获取目标仓库的最新更新
       - name: Fetch upstream
         run: git fetch upstream
 
-      # 合并最新代码到主分支
+      # 合并最新代码到当前分支
       - name: Merge upstream changes
-        run: git merge upstream/master -m "Merge upstream changes"
+        run: git merge upstream/${{ env.DEFAULT_BRANCH }} -m "Merge upstream changes"
 
       # 推送合并后的代码到 Fork
       - name: Push changes
-        run: |
-          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push origin master
