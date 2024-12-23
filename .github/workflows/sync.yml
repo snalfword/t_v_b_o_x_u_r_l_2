@@ -31,7 +31,7 @@ jobs:
 
       # 合并最新代码到当前分支
       - name: Merge upstream changes
-        run: git merge upstream/${{ env.DEFAULT_BRANCH }} -m "Merge upstream changes"
+        run: git merge upstream/${{ env.DEFAULT_BRANCH }} --allow-unrelated-histories -m "Merge upstream changes"
 
       # 推送合并后的代码到 Fork
       - name: Push changes
