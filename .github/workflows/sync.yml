@@ -25,9 +25,9 @@ jobs:
 
       # 合并最新代码到主分支
       - name: Merge upstream changes
-        run: git merge upstream/main -m "Merge upstream changes"
+        run: git merge upstream/master -m "Merge upstream changes"
 
       # 推送合并后的代码到 Fork
       - name: Push changes
         run: |
-          git push origin main
+          git push origin master
